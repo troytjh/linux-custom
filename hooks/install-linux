@@ -1,0 +1,24 @@
+LINUX_CUSTOM=/home/troytjh/.cache/build/linux-custom/linux
+cd $LINUX_CUSTOM
+pkgver=`yay -Qs linux | awk '/local\/linux / {print $2}'`
+
+clean () {
+        printf "Cleaning Packages"
+        printf "\n"; 
+	rm linux-custom-$_clean-x86_64.pkg.tar.xz;
+        rm linux-custom-headers-$_clean-x86_64.pkg.tar.xz;
+}
+
+if [ $1 ]; then
+	yay -U linux-custom-$1-x86_64.pkg.tar.xz
+	yay -U linux-custom-headers-$1-x86_64.pkg.tar.xz
+	_clean=$1
+	clean;
+else  
+	yay -U linux-custom-$pkgver-x86_64.pkg.tar.xz;
+	yay -U linux-custom-headers-$pkgver-x86_64.pkg.tar.xz;
+	_clean=$pkgver
+	clean;
+fi
+
+

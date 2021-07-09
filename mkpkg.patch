@@ -1,0 +1,19 @@
+--- PKGBUILD.orig	2020-07-22 16:30:46.000000000 -0500
++++ PKGBUILD	2020-07-22 22:47:48.399786245 -0500
+@@ -61,7 +61,6 @@
+ build() {
+   cd $_srcname
+   make all
+-  make htmldocs
+ }
+ 
+ _package() {
+@@ -188,7 +187,7 @@
+   ln -sr "$builddir/Documentation" "$pkgdir/usr/share/doc/$pkgbase"
+ }
+ 
+-pkgname=("$pkgbase" "$pkgbase-headers" "$pkgbase-docs")
++pkgname=("$pkgbase" "$pkgbase-headers")
+ for _p in "${pkgname[@]}"; do
+   eval "package_$_p() {
+     $(declare -f "_package${_p#$pkgbase}")
