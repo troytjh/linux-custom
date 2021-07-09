@@ -1,0 +1,4 @@
+[submodule "linux-src"]
+	path = linux-src
+	url = https://github.com/archlinux/svntogit-packages
+	branch = packages/linux
