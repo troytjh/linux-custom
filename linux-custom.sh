@@ -1,33 +1,37 @@
 #!/bin/bash
 
 LINUX_CUSTOM=/home/troytjh/.cache/build/linux-custom
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
-cd $LINUX_CUSTOM
-asp update linux
+cd $SCRIPT_DIR
+#asp update linux
+git submodule update --init --recursive
 if [ -d linux-src ]; then
-    cd linux-src
-    git pull
-    cd ..
+    #cd linux-src
+    #git pull
+    #cd ..
 
     if [ -d linux ]; then
         cp -f linux-src/trunk/* linux
     else
         cp -r linux-src/trunk linux
     fi    
-
-    cd linux/src/archlinux-linux
-    git stash
-    git stash clear
-    cd ../..
-
+    
+    if [-d linux/src/archlinux-linux ]; then
+        cd linux/src/archlinux-linux
+        git stash
+        git stash clear
+        cd ../../..
+    
+    cd linux
 else
-    if [ -d linux ]; then
-        mv linux linux-tmp
-    fi   
-    asp chechout linux
-    mv linux linux-src
-    cp -f linux-src/trunk/* linux-tmp
-    mv linux-tmp linux
+    #if [ -d linux ]; then
+    #    mv linux linux-tmp
+    #fi   
+    #asp chechout linux
+    #mv linux linux-src
+    cp -f linux-src/trunk/* linux
+    #mv linux-tmp linux
 
     cd linux
 fi
