@@ -42,11 +42,12 @@ pkgver=`awk '/^pkgver/ {print $1}' PKGBUILD | awk -F'=' '{print $2}'`
 pkgnew=`awk '/^pkgver/ {print $1}' PKGBUILD | awk -F'=' '{print $2}'`
 srctag=${pkgver%.*}-${pkgver##*.}
 patch PKGBUILD < ../mkpkg.patch
-patch -b config < ../config.patch
+#patch -b config < ../config.patch
 if [ ! -d "src" ]; then
    mkdir src
 fi
-cp ../OpenRGB.patch .
+cp ../OpenRGB.patch . && cp ../OpenRGB.patch src
+cp ../config.patch . && cp ../config.patch src
 sed -i 's/pkgbase=linux/pkgbase=linux-custom/g' PKGBUILD
 sed -i "s/pkgver=$pkgnew/pkgver=$pkgver/g" PKGBUILD
 updpkgsums
@@ -107,11 +108,12 @@ build () {
 prepare () {
 	pkgbase=`awk '/^pkgbase/ {print $1}' PKGBUILD | awk -F'=' '{print $2}'`
 	pkgrel=`awk '/^pkgrel/ {print $1}' PKGBUILD | awk -F'=' '{print $2}'`
+	sed -ie '/source=/a \ \ config.patch' PKGBUILD
 	sed -ie '/source=/a \ \ OpenRGB.patch' PKGBUILD
 	source=( 
   		`cat PKGBUILD \
   		| awk '/^source/,EOF {print}' \
-  		| awk 'NR==4,/)/ {print prev} {prev = $0 }'`
+  		| awk 'NR==3,/)/ {print prev} {prev = $0 }'`
   	)
 	echo ${source[@]}
 	cd src/archlinux-linux/
@@ -125,7 +127,7 @@ prepare () {
 	for src in "${source[@]}"; do
 	    src="${src%%::*}"
 	    src="${src##*/}"
-    	[[ $src = *.patch ]] || continue
+    	[[ $src = *.patch && $src ]] || continue
     	echo "Applying patch $src..."
     	patch -Np1 < "../$src"
 	done
@@ -133,7 +135,9 @@ prepare () {
 	echo "Setting config..."
 	cp ../config .config
 	make olddefconfig
-
+        sed -i 's/#\ CONFIG_I2C_NCT6775\ is\ not\ set/CONFIG_I2C_NCT6775=m/g' .config
+#	patch -b .config ../config.patch
+	
 	make -s kernelrelease > version
 	echo "Prepared $pkgbase version $(<version)"
 	cd ../../
