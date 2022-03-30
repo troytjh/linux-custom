@@ -5,7 +5,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 cd $SCRIPT_DIR
 #asp update linux
-git submodule update --remote --init --recursive
+git submodule update --remote --init --depth 10 --no-fetch
 if [ -d linux-src ]; then
     #cd linux-src
     #git pull
